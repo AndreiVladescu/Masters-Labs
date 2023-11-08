@@ -42,3 +42,46 @@ On Windows, the x64 calling convention is different from the System V AMD64 ABI.
 - Callee-saved registers (`RBX`, `RBP`, `RDI`, `RSI`, `R12-R15`) must be preserved by the callee.
 
 Keep in mind that these conventions are used by compilers to generate assembly code for function calls. The choice of calling convention may also depend on the operating system and compiler settings. Additionally, other conventions exist, and some programming languages or libraries may define their own conventions. Always refer to the specific documentation for the platform, compiler, or language you are working with for the most accurate and up-to-date information.
+
+# How a function looks
+```
+
+
+ +-------------------+    <- Higher memory addresses
+ |  Return Address   |    <- Address to return after the function
+ +-------------------+
+ | Saved EBP         |    <- Saved value of the base pointer (function prologue)
+ +-------------------+    <- Current EBP (base pointer)
+ | Local Variables   |    <- Space for local variables
+ +-------------------+    <- Lower memory addresses
+
+
+
++-------------------+
+|   Calling Code    |
++-------------------+
+         |
+         v
++-------------------+
+|   push ebp        |
+|   mov ebp, esp    |
+|   sub esp, X      |
+|    .......        |
+|   pop ebp #leave  |
+|   ret             |
++-------------------+
+         |
+         v
++-------------------+
+|   Calling Code    |
++-------------------+
+```
+
+# Simple gadget example
+
+```
+pop eax    ; Pop the value from the top of the stack into the EAX register
+pop ebx    ; Pop another value from the stack into the EBX register
+add eax, ebx  ; Add the values in EAX and EBX
+ret       ; Return from the function
+```
